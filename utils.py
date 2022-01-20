@@ -197,7 +197,9 @@ def send_email(subject,text,html):
     #s.ehlo()
     #s.starttls()
     s = smtplib.SMTP_SSL('smtp.gmail.com', 465)
-    gmail_password='!j0l65MIUyj3'
+    pwfile = open('.pwfile.txt', 'r')
+    pwlines = pwfile.readlines()
+    gmail_password=pwlines[0]
     s.login(me, gmail_password)
 
     # sendmail function takes 3 arguments: sender's address, recipient's address
