@@ -163,8 +163,8 @@ def print_entry(db,entry,filters=[]):
     
     return text,html,ismatched
 
-def send_email(text,html):
-    print("Preparing email...")
+def send_email(subject,text,html):
+
     import smtplib
 
     from email.mime.multipart import MIMEMultipart
@@ -177,7 +177,7 @@ def send_email(text,html):
     
     # Create message container - the correct MIME type is multipart/alternative.
     msg = MIMEMultipart('alternative')
-    msg['Subject'] = "My ArXiv Update"
+    msg['Subject'] = subject
     msg['From'] = me
     msg['To'] = you
     
@@ -197,13 +197,10 @@ def send_email(text,html):
     #s.ehlo()
     #s.starttls()
     s = smtplib.SMTP_SSL('smtp.gmail.com', 465)
-    pwfile = open('.pwfile.txt', 'r')
-    pwlines = pwfile.readlines()
-    gmail_password=pwlines[0]
+    gmail_password='!j0l65MIUyj3'
     s.login(me, gmail_password)
 
     # sendmail function takes 3 arguments: sender's address, recipient's address
     # and message to send - here it is sent as one string.
     s.sendmail(me, you, msg.as_string())
     s.quit()
-    print("    ...email sent!")

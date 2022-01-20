@@ -122,13 +122,15 @@ if __name__ == "__main__":
   ]
     
   # Create the body of the message (a plain-text and an HTML version).
-  text = "Josh, here is your daily arXiv update:"
-  html = f"""
-<html>
-  <head></head>
-  <body>
-  <p>{text}</p>
-"""
+  text = ""
+  html = """"""
+
+  num_total = 0
+  num_matched = 0
+  num_matched_hepex = 0
+  num_matched_hepph = 0
+  num_matched_other = 0
+      
   matchedtext=""""""
   matchedhtml=""""""
   unmatchedtext=""""""
@@ -148,6 +150,7 @@ if __name__ == "__main__":
     parse = feedparser.parse(response)
     num_added = 0
     num_skipped = 0
+
     for e in parse.entries:
 
       j = encode_feedparser_dict(e)
@@ -164,19 +167,28 @@ if __name__ == "__main__":
         num_added += 1
         num_added_total += 1
         etext,ehtml,ismatched=print_entry(db,rawid,filters)
+        num_total+=1
         if ismatched:
-          matchedtext=matchedtext+f"""
+          num_matched+=1
+          if db[rawid]["arxiv_primary_category"]["term"]=="hep-ex":
+            num_matched_hepex+=1
+          elif db[rawid]["arxiv_primary_category"]["term"]=="hep-ph":
+            num_matched_hepph+=1
+          else:
+            num_matched_other+=1
+            
+          matchedtext=text+f"""
         {etext}
 """
-          matchedhtml=matchedhtml+f"""
+          matchedhtml=html+f"""
         {ehtml}
 """
 
         else:
-          unmatchedtext=unmatchedtext+f"""
+          unmatchedtext=text+f"""
         {etext}
 """
-          unmatchedhtml=unmatchedhtml+f"""
+          unmatchedhtml=html+f"""
         {ehtml}
 """
 
@@ -218,8 +230,23 @@ if __name__ == "__main__":
     print('Saving database with %d papers to %s' % (len(db), Config.db_path))
     safe_pickle_dump(db, Config.db_path)
 
-  html=html+"""
+  summary=f"""
+Found {num_total} new entries; {num_matched} matched your filter terms:
+   - hep-ex = {num_matched_hepex}
+   - hep-ph = {num_matched_hepph}
+   - other  = {num_matched_other}
+"""
+  subject=f"My ArXiv Update: {num_total} new, {num_matched} matched"
+  text = "Josh, here is your daily arXiv update:\n"+summary+text
+  html = f"""
+<html>
+  <head></head>
+  <body>
+  <p>Josh, here is your daily arXiv update:</p>
+  <p>"""+summary.replace('\n','<br>')+"""</p>
+"""+html+"""
   </body>
 </html>
 """
-  send_email(text,html)
+  send_email(subject,text,html)
+  print(text)
