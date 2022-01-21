@@ -14,7 +14,7 @@ import argparse
 import urllib.request
 import feedparser
 
-from utils import Config, safe_pickle_dump, print_entry, send_email
+from utils import Config, safe_pickle_dump, print_entry, send_email, gethtmlcat
 
 def encode_feedparser_dict(d):
   """ 
@@ -57,6 +57,7 @@ if __name__ == "__main__":
   parser.add_argument('--results-per-iteration', type=int, default=100, help='passed to arxiv API')
   parser.add_argument('--wait-time', type=float, default=5.0, help='lets be gentle to arxiv API (in number of seconds)')
   parser.add_argument('--break-on-no-added', type=int, default=1, help='break out early if all returned query papers are already in db? 1=yes, 0=no')
+  parser.add_argument('--updatedTime', type=int, default=0, help='Use updated time instead of submitted time? 1=yes, 0=no')
   args = parser.parse_args()
 
   # misc hardcoded variables
@@ -129,12 +130,16 @@ if __name__ == "__main__":
   num_matched = 0
   num_matched_hepex = 0
   num_matched_hepph = 0
+  num_matched_hepth = 0
   num_matched_other = 0
-      
-  matchedtext=""""""
-  matchedhtml=""""""
-  unmatchedtext=""""""
-  unmatchedhtml=""""""
+
+
+  matchedtext={"hep-ex":"""""","hep-ph":"""""","hep-th":"""""","other":""""""}
+  matchedhtml={"hep-ex":"""""","hep-ph":"""""","hep-th":"""""","other":""""""}
+  unmatchedtext={"hep-ex":"""""","hep-ph":"""""","hep-th":"""""","other":""""""}
+  unmatchedhtml={"hep-ex":"""""","hep-ph":"""""","hep-th":"""""","other":""""""}
+
+  htmlcat={cat:gethtmlcat(cat) for cat in matchedhtml}
   
   # -----------------------------------------------------------------------------
   # main loop where we fetch the new results
@@ -143,8 +148,11 @@ if __name__ == "__main__":
   for i in range(args.start_index, args.max_index, args.results_per_iteration):
 
     print("Results %i - %i" % (i,i+args.results_per_iteration))
-    query = 'search_query=%s&sortBy=lastUpdatedDate&start=%i&max_results=%i' % (args.search_query,
-                                                         i, args.results_per_iteration)
+    query = 'search_query=%s&sortBy=submittedDate&start=%i&max_results=%i' % (args.search_query,
+                                                                              i, args.results_per_iteration)
+    if args.updatedTime: 
+      query = 'search_query=%s&sortBy=lastUpdatedDate&start=%i&max_results=%i' % (args.search_query,
+                                                                                  i, args.results_per_iteration)
     with urllib.request.urlopen(base_url+query) as url:
       response = url.read()
     parse = feedparser.parse(response)
@@ -160,35 +168,45 @@ if __name__ == "__main__":
       j['_rawid'] = rawid
       j['_version'] = version
 
+      cat=j["arxiv_primary_category"]["term"]
+      if cat not in [key for key in matchedhtml]:
+        cat="other"
+                  
       # add to our database if we didn't have it before, or if this is a new version
       if not rawid in db or j['_version'] > db[rawid]['_version']:
         db[rawid] = j
-        print('Updated %s added %s' % (j['updated'].encode('utf-8'), j['title'].encode('utf-8')))
+        if not args.updatedTime: 
+          print('Submitted %s added %s' % (j['published'].encode('utf-8'), j['title'].encode('utf-8')))
+        else:
+          print('Updated %s added %s' % (j['updated'].encode('utf-8'), j['title'].encode('utf-8')))
         num_added += 1
         num_added_total += 1
-        etext,ehtml,ismatched=print_entry(db,rawid,filters)
+        etext,ehtml,ismatched=print_entry(args,db,rawid,filters)
         num_total+=1
         if ismatched:
           num_matched+=1
-          if db[rawid]["arxiv_primary_category"]["term"]=="hep-ex":
+          if cat=="hep-ex":
             num_matched_hepex+=1
-          elif db[rawid]["arxiv_primary_category"]["term"]=="hep-ph":
+          elif cat=="hep-ph":
             num_matched_hepph+=1
+          elif cat=="hep-th":
+            num_matched_hepth+=1
           else:
-            num_matched_other+=1
+            num_matched_other+=1 
+
             
-          matchedtext=text+f"""
+          matchedtext[cat]=matchedtext[cat]+f"""
         {etext}
 """
-          matchedhtml=html+f"""
+          matchedhtml[cat]=matchedhtml[cat]+f"""
         {ehtml}
 """
 
         else:
-          unmatchedtext=text+f"""
+          unmatchedtext[cat]=unmatchedtext[cat]+f"""
         {etext}
 """
-          unmatchedhtml=html+f"""
+          unmatchedhtml[cat]=unmatchedhtml[cat]+f"""
         {ehtml}
 """
 
@@ -198,14 +216,46 @@ if __name__ == "__main__":
 
 
     text=text+f"""
-{matchedtext}
+{matchedtext["hep-ex"]}
+{matchedtext["hep-ph"]}
+{matchedtext["hep-th"]}
+{matchedtext["other"]}
 ------------------------------------------------------------------
-{unmatchedtext}
+{unmatchedtext["hep-ex"]}
+{unmatchedtext["hep-ph"]}
+{unmatchedtext["hep-th"]}
+{unmatchedtext["other"]}
 """
     html=html+f"""
-{matchedhtml}
 <hr>
-{unmatchedhtml}
+<h2>{htmlcat["hep-ex"]}</h2>
+{matchedhtml["hep-ex"]}
+<hr>
+<h2>{htmlcat["hep-ph"]}</h2>
+{matchedhtml["hep-ph"]}
+<hr>
+<h2>{htmlcat["hep-th"]}</h2>
+{matchedhtml["hep-th"]}
+<hr>
+<h2>{htmlcat["other"]}</h2>
+{matchedhtml["other"]}
+<br>
+<br>
+<hr>
+<hr>
+<h1>Unmatched</h1>
+<hr>
+<h2>{htmlcat["hep-ex"]}</h2>
+{unmatchedhtml["hep-ex"]}
+<hr>
+<h2>{htmlcat["hep-ph"]}</h2>
+{unmatchedhtml["hep-ph"]}
+<hr>
+<h2>{htmlcat["hep-th"]}</h2>
+{unmatchedhtml["hep-th"]}
+<hr>
+<h2>{htmlcat["other"]}</h2>
+{unmatchedhtml["other"]}
 """
 
     
@@ -234,6 +284,7 @@ if __name__ == "__main__":
 Found {num_total} new entries; {num_matched} matched your filter terms:
    - hep-ex = {num_matched_hepex}
    - hep-ph = {num_matched_hepph}
+   - hep-th = {num_matched_hepth}
    - other  = {num_matched_other}
 """
   subject=f"My ArXiv Update: {num_total} new, {num_matched} matched"

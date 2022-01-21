@@ -101,10 +101,13 @@ def strip_version(idstr):
 def isvalidid(pid):
   return re.match('^\d+\.\d+(v\d+)?$', pid)
 
-def print_entry(db,entry,filters=[]):
+def print_entry(args,db,entry,filters=[]):
     # render time information nicely
-    timestruct = dateutil.parser.parse(db[entry]['updated'])
-    published_time = '%s/%s/%s' % (timestruct.month, timestruct.day, timestruct.year)
+    if not args.updatedTime:
+        timestruct = dateutil.parser.parse(db[entry]['published'])
+    else:
+        timestruct = dateutil.parser.parse(db[entry]['updated'])
+    published_time = '%s/%s/%s' % (timestruct.day, timestruct.month, timestruct.year)
 
     authors=", ".join([author['name'] for author in db[entry]['authors']])
     if 'LHCb collaboration' in authors:
@@ -123,15 +126,7 @@ def print_entry(db,entry,filters=[]):
 
     # Add some colour highlighting of category
     print(cat)
-    htmlcat=cat
-    if cat=="hep-ex":
-        htmlcat='<span style="color:darkred;">['+cat+']</span>'
-    elif cat=="hep-ph":
-        htmlcat='<span style="color:darkgreen;">['+cat+']</span>'
-    elif cat=="hep-th":
-        htmlcat='<span style="color:darkblue;">['+cat+']</span>'
-    else:
-        htmlcat='<span style="color:gray;">['+cat+']</span>'
+    htmlcat=gethtmlcat(cat)
 
     htmlentry=f'<a href="https://arxiv.org/abs/{entry}">{entry}</a>'
 
@@ -154,8 +149,9 @@ def print_entry(db,entry,filters=[]):
             title=title.replace(filt,f'<span style="color:red;">{filt}</span>')
             ismatched=True
 
-    if ismatched:
-        html=html.replace(title,f'<h3 style="color:red;">{db[entry]["title"]}</h3>')
+    #if ismatched:
+    #    html=html.replace(title,f'<h3 style="color:red;">{db[entry]["title"]}</h3>')
+        
 
         
     print(text)
@@ -206,3 +202,15 @@ def send_email(subject,text,html):
     # and message to send - here it is sent as one string.
     s.sendmail(me, you, msg.as_string())
     s.quit()
+
+def gethtmlcat(cat):
+    htmlcat=cat
+    if cat=="hep-ex":
+        htmlcat='<span style="color:darkred;">['+cat+']</span>'
+    elif cat=="hep-ph":
+        htmlcat='<span style="color:darkgreen;">['+cat+']</span>'
+    elif cat=="hep-th":
+        htmlcat='<span style="color:darkblue;">['+cat+']</span>'
+    else:
+        htmlcat='<span style="color:gray;">['+cat+']</span>'
+    return htmlcat
