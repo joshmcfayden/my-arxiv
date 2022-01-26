@@ -101,7 +101,7 @@ if __name__ == "__main__":
     'anomaly','anomalies',
 
     ## MC
-    'Sherpa','SHERPA','MadGraph','aMC@NLO','HSF','Pythia','Herwig','powheg','Powheg','POWHEG',
+    'MC','Monte Carlo','Sherpa','SHERPA','MadGraph','aMC@NLO','HSF','Pythia','Herwig','powheg','Powheg','POWHEG',
 
     ## HF
     'heavy flavour','Heavy flavour','heavy flavor','Heavy flavor',
@@ -213,52 +213,7 @@ if __name__ == "__main__":
           
       else:
         num_skipped += 1
-
-
-    text=text+f"""
-{matchedtext["hep-ex"]}
-{matchedtext["hep-ph"]}
-{matchedtext["hep-th"]}
-{matchedtext["other"]}
-------------------------------------------------------------------
-{unmatchedtext["hep-ex"]}
-{unmatchedtext["hep-ph"]}
-{unmatchedtext["hep-th"]}
-{unmatchedtext["other"]}
-"""
-    html=html+f"""
-<hr>
-<h2>{htmlcat["hep-ex"]}</h2>
-{matchedhtml["hep-ex"]}
-<hr>
-<h2>{htmlcat["hep-ph"]}</h2>
-{matchedhtml["hep-ph"]}
-<hr>
-<h2>{htmlcat["hep-th"]}</h2>
-{matchedhtml["hep-th"]}
-<hr>
-<h2>{htmlcat["other"]}</h2>
-{matchedhtml["other"]}
-<br>
-<br>
-<hr>
-<hr>
-<h1>Unmatched</h1>
-<hr>
-<h2>{htmlcat["hep-ex"]}</h2>
-{unmatchedhtml["hep-ex"]}
-<hr>
-<h2>{htmlcat["hep-ph"]}</h2>
-{unmatchedhtml["hep-ph"]}
-<hr>
-<h2>{htmlcat["hep-th"]}</h2>
-{unmatchedhtml["hep-th"]}
-<hr>
-<h2>{htmlcat["other"]}</h2>
-{unmatchedhtml["other"]}
-"""
-
-    
+   
     
     # print some information
     print('Added %d papers, already had %d.' % (num_added, num_skipped))
@@ -288,14 +243,55 @@ Found {num_total} new entries; {num_matched} matched your filter terms:
    - other  = {num_matched_other}
 """
   subject=f"My ArXiv Update: {num_total} new, {num_matched} matched"
-  text = "Josh, here is your daily arXiv update:\n"+summary+text
+
+  text = "Josh, here is your daily arXiv update:\n"+summary+f"""
+{matchedtext["hep-ex"]}
+{matchedtext["hep-ph"]}
+{matchedtext["hep-th"]}
+{matchedtext["other"]}
+------------------------------------------------------------------
+{unmatchedtext["hep-ex"]}
+{unmatchedtext["hep-ph"]}
+{unmatchedtext["hep-th"]}
+{unmatchedtext["other"]}
+"""
+
+
   html = f"""
 <html>
   <head></head>
   <body>
   <p>Josh, here is your daily arXiv update:</p>
-  <p>"""+summary.replace('\n','<br>')+"""</p>
-"""+html+"""
+  <p>"""+summary.replace('\n','<br>')+f"""</p>
+  <hr>
+  <h2>{htmlcat["hep-ex"]}</h2>
+{matchedhtml["hep-ex"]}
+  <hr>
+  <h2>{htmlcat["hep-ph"]}</h2>
+  {matchedhtml["hep-ph"]}
+  <hr>
+  <h2>{htmlcat["hep-th"]}</h2>
+{matchedhtml["hep-th"]}
+  <hr>
+  <h2>{htmlcat["other"]}</h2>
+{matchedhtml["other"]}
+  <br>
+  <br>
+  <hr>
+  <hr>
+  <h1>Unmatched</h1>
+  <hr>
+  <h2>{htmlcat["hep-ex"]}</h2>
+{unmatchedhtml["hep-ex"]}
+  <hr>
+  <h2>{htmlcat["hep-ph"]}</h2>
+{unmatchedhtml["hep-ph"]}
+  <hr>
+  <h2>{htmlcat["hep-th"]}</h2>
+{unmatchedhtml["hep-th"]}
+  <hr>
+  <h2>{htmlcat["other"]}</h2>
+{unmatchedhtml["other"]}
   </body>
 </html>
 """
