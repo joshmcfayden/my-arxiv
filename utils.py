@@ -113,6 +113,7 @@ def print_entry(args,db,entry,filters=[]):
     if 'LHCb collaboration' in authors:
         authors='LHCb collaboration'
 
+    comment=db[entry]["arxiv_comment"] if "arxiv_comment" in db[entry] else ""
     cat=db[entry]["arxiv_primary_category"]["term"]
 
     text=f"""
@@ -120,6 +121,7 @@ def print_entry(args,db,entry,filters=[]):
 {db[entry]["title"]}
 {entry} [{cat}]
 {published_time}
+{comment}
 {authors}
 {db[entry]['summary']}
 """
@@ -136,6 +138,7 @@ def print_entry(args,db,entry,filters=[]):
 <hr>
 <h3>{db[entry]["title"]}</h3>
 {htmlentry}  {htmlcat}  {published_time}<br>
+<span style="font-size:0.9em;"><i>{comment}</i></span><br>
 <p><b>{authors}</b></p>
 <p style="font-size:0.9em;">{db[entry]['summary']}</p>
 <br>

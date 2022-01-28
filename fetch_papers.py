@@ -14,6 +14,9 @@ import argparse
 import urllib.request
 import feedparser
 
+import pprint
+pp = pprint.PrettyPrinter(indent=4)
+
 from utils import Config, safe_pickle_dump, print_entry, send_email, gethtmlcat
 
 def encode_feedparser_dict(d):
@@ -163,6 +166,8 @@ if __name__ == "__main__":
 
       j = encode_feedparser_dict(e)
 
+      #pp.pprint(j)
+      
       # extract just the raw arxiv id and version for this paper
       rawid, version = parse_arxiv_url(j['id'])
       j['_rawid'] = rawid
