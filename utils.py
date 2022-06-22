@@ -200,7 +200,6 @@ def send_email(subject,text,html):
     pwfile = open('.pwfile.txt', 'r')
     pwlines = pwfile.readlines()
     gmail_password=pwlines[0].strip()
-    print('TEST:',gmail_password)
     s.login(me, gmail_password)
 
     # sendmail function takes 3 arguments: sender's address, recipient's address
