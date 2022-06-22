@@ -171,7 +171,7 @@ def send_email(subject,text,html):
     
     # me == my email address
     # you == recipient's email address
-    me = "josh.mcfayden@gmail.com"
+    me = "jam.myarxiv@gmail.com"
     you = "mcfayden@cern.ch"
     
     # Create message container - the correct MIME type is multipart/alternative.
@@ -192,13 +192,15 @@ def send_email(subject,text,html):
     msg.attach(part2)
 
     # Send the message via local SMTP server.
-    #s = smtplib.SMTP('smtp.gmail.com',587)
+    s = smtplib.SMTP('smtp.gmail.com',587)
     #s.ehlo()
-    #s.starttls()
+    s.starttls()
     s = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+    
     pwfile = open('.pwfile.txt', 'r')
     pwlines = pwfile.readlines()
-    gmail_password=pwlines[0]
+    gmail_password=pwlines[0].strip()
+    print('TEST:',gmail_password)
     s.login(me, gmail_password)
 
     # sendmail function takes 3 arguments: sender's address, recipient's address

@@ -109,6 +109,8 @@ if __name__ == "__main__":
     ## HF
     'heavy flavour','Heavy flavour','heavy flavor','Heavy flavor',
 
+    ## FASER
+    'FASER','Faser',
     
     # People
 
@@ -117,11 +119,13 @@ if __name__ == "__main__":
     'Siegert','Bothmann','Napoletano','Schönherr', 'Schumann',
     'Plaetzer','Preuss','Siodmok',
     'Ilten','Lonnblad','Mrenna','Skands',
-    'Buckley','Gutschow','Amoroso',
+    'Buckley','Gutschow','S. Amoroso','Simone Amoroso',
 
     ## EFT
     'Mimasu',
 
+    ## FASER
+    'Feng','Kling',
 
   ]
     
