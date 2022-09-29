@@ -91,7 +91,7 @@ if __name__ == "__main__":
 
     ## ttX
     'Top quark', 'top quark',
-    't\bar{t}W','t\bar{t}Z','tWZ'
+    't\\bar{t}W','t\\bar{t}Z','tWZ'
 
     ## 4 tops
     't\bar{t}t\bar{t}','4 top','four top','Four top',
@@ -115,17 +115,20 @@ if __name__ == "__main__":
     # People
 
     ## MC
-    'Frixione','Mattelaer','Maltoni','Frederix',
+    'Frixione','Mattelaer','Maltoni','Frederix','Zaro'
     'Siegert','Bothmann','Napoletano','Schönherr', 'Schumann',
-    'Plaetzer','Preuss','Siodmok',
-    'Ilten','Lonnblad','Mrenna','Skands',
+    'Plaetzer','Preuss','Siodmok','Richardson',
+    'Ilten','Lonnblad','Mrenna','Skands','Prestel'
     'Buckley','Gutschow','S. Amoroso','Simone Amoroso',
 
     ## EFT
-    'Mimasu',
+    'Mimasu','Vryonidou','Durieux',
 
+    ## ttX
+    'Worek','Reina',
+    
     ## FASER
-    'Feng','Kling',
+    'Jonathan L. Feng','J. Feng', 'J. L. Feng','Kling',
 
   ]
     
