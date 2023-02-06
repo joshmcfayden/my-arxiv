@@ -104,7 +104,7 @@ if __name__ == "__main__":
     'anomaly','anomalies',
 
     ## MC
-    'MC','Monte Carlo','Sherpa','SHERPA','MadGraph','aMC@NLO','HSF','Pythia','Herwig','powheg','Powheg','POWHEG',
+    'MC','Monte Carlo','Sherpa','SHERPA','MadGraph','aMC@NLO','HSF','Pythia','Herwig','powheg','Powheg','POWHEG', 'NNLO',
 
     ## HF
     'heavy flavour','Heavy flavour','heavy flavor','Heavy flavor',
@@ -120,7 +120,8 @@ if __name__ == "__main__":
     'Plaetzer','Preuss','Siodmok','Richardson',
     'Ilten','Lonnblad','Mrenna','Skands','Prestel'
     'Buckley','Gutschow','S. Amoroso','Simone Amoroso',
-
+    'Zanderighi',
+    
     ## EFT
     'Mimasu','Vryonidou','Durieux',
 
